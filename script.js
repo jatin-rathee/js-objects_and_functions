@@ -90,7 +90,6 @@ change(age, obj);
 console.log(age);
 console.log(obj.city);  
 
-*/
 
 
 // Passing functions as arguments
@@ -126,3 +125,62 @@ var rates = arrayCalc(ages, maxHeartRate);
 console.log(ages);
 console.log(fullages);
 console.log(rates);
+
+
+
+
+// Functions returning functions
+
+function interviewQuestion(job) {
+    if (job === 'designer') {
+        return function(name) {
+            console.log(name + ', can you please expain what UX design is?');
+        }
+    }
+    else if (job === 'teacher') {
+        return function(name) {
+            console.log('What subject do you teach, ' + name + ' ?');
+        }
+    } else {
+        return function(name) {
+            console.log('Hello ' + name + ', what do you do ? ');
+        }
+    }
+} 
+
+var teacherQuestion = interviewQuestion('teacher');
+var designerQuestion = interviewQuestion('designer');
+var randomQuestion = interviewQuestion('developer');
+
+teacherQuestion('John');
+designerQuestion('Jane');
+designerQuestion('Mark');
+designerQuestion('Mike');
+
+interviewQuestion('teacher')('Mark');
+
+randomQuestion('Jatin');
+*/
+
+
+// IIFE => Immediately invoked function expression
+
+/*
+function game() {
+    var score = Math.random() * 10;
+    console.log(score >= 5);
+}
+game();
+*/
+
+(function() {
+    var score = Math.random() * 10;
+    console.log(score >= 5);
+})();
+
+// console.log(score);     // is private and hidden
+
+(function(goodLuck) {
+    var score = Math.random() * 10;
+    console.log(score >= 5 - goodLuck);
+})(5);
