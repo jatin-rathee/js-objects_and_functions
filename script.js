@@ -184,7 +184,6 @@ game();
     var score = Math.random() * 10;
     console.log(score >= 5 - goodLuck);
 })(5);
-*/
 
 
 // Closures => An inner function has always access to the variables and parameters of its outer function, even after the outer function has returned.
@@ -222,3 +221,187 @@ function interviewQuestion(job) {
 }
 
 interviewQuestion('teacher')('Jatin');
+
+
+// Bind, Call and apply methods
+
+var john = {
+    name: 'John',
+    age: 26,
+    job: 'developer',
+    presentation: function(style, timeOfDay) {
+        if (style === 'formal') {
+            console.log('Good ' + timeOfDay + ' Ladies and gentlemen! I\'m ' + this.name + ', I\'m a ' + this.job + 'and I\'m ' + this.age + ' years old.');
+        } else if (style === 'friendly') {
+            console.log('Hey! What\'s up? I\'m '+ this.name + ' and I\'m a' + this.job + ' and I\'m ' + this.age + ' years old. Have a nice ' + timeOfDay + '.');
+        }
+    }
+
+};
+
+var emily = {
+    name: 'Emily',
+    age: 35,
+    job: 'designer'
+};
+
+john.presentation('formal', 'morning');
+
+// call method => allows us to set 'this' variable here in first argument and let us use john method on emily with other two args
+
+john.presentation.call(emily, 'friendly', 'afternoon');
+
+// apply method => similar to call method only difference is that takes 2 args ie one that sets this and other is array of args to pass
+
+// john.presentation.apply(emily, ['friendly', 'afternoon']);
+
+// bind method => similar to call but instead makes a copy of function to use it somewhere
+
+var johnFriendly = john.presentation.bind(john, 'friendly');
+
+johnFriendly('morning');
+johnFriendly('night');  
+
+var emilyFormal = john.presentation.bind(emily, 'formal');
+
+emilyFormal('afternoon');
+
+
+
+
+var years = [1990, 1965, 1937, 2005, 1998];
+
+function arrayCalc(arr, fn) {
+    var arrRes = [];
+    for (var i=0; i<arr.length; i++) {
+        arrRes.push(fn(arr[i]));
+    }
+    return arrRes;
+}
+
+function calculateAge(el) {
+    return 2016 - el;
+}
+
+function isFullAge(limit, el) {
+    return el >= limit;
+}
+
+var ages = arrayCalc(years, calculateAge);
+var fullJapan = arrayCalc(ages, isFullAge.bind(this, 20));
+console.log(ages);  
+console.log(fullJapan);
+
+
+
+// Coding Challenge 7
+
+
+(function () {
+
+    var Question = function (question, options, correct) {
+        this.question = question;
+        this.options = options;
+        this.correct = correct;
+    }
+
+    Question.prototype.displayQuestion = function () {
+        console.log(this.question);
+
+        this.options.forEach((option, i) => {
+            console.log(i + ': ' + option);
+        });
+    }
+
+    Question.prototype.checkAnswer = function (ans) {
+        if (this.correct === ans) {
+            console.log('Correct answer!');
+        } else console.log('Wrong Answer!');
+    }
+
+    var q1 = new Question('2 + 2', ['2', '4', '6'], 1);
+    var q2 = new Question('2 - 2', ['2', '4', '0'], 2);
+    var q3 = new Question('2 * 2', ['4', '2', '0'], 0);
+
+    var questions = [q1, q2, q3];
+
+    var n = Math.floor(Math.random() * 3);
+
+    questions[n].displayQuestion();
+
+    var ans = parseInt(prompt('Enter answer: '));
+
+    questions[n].checkAnswer(ans);
+})();
+*/
+
+
+(function () {
+
+    var Question = function (question, options, correct) {
+        this.question = question;
+        this.options = options;
+        this.correct = correct;
+    }
+
+    Question.prototype.displayQuestion = function () {
+        console.log(this.question);
+
+        this.options.forEach((option, i) => {
+            console.log(i + ': ' + option);
+        });
+    }
+
+    Question.prototype.checkAnswer = function (ans, callback) {
+        if (this.correct === ans) {
+            console.log('Correct answer!');
+            sc = callback(true);
+
+        } else {
+            console.log('Wrong Answer!');
+            sc = callback(false);
+        }
+
+        this.displayScore(sc);
+    }
+
+    Question.prototype.displayScore = function(score) {
+        console.log('Your current score: ' + score);
+        console.log('-----------------------------------');
+    }
+
+    var q1 = new Question('2 + 2', ['2', '4', '6'], 1);
+    var q2 = new Question('2 - 2', ['2', '4', '0'], 2);
+    var q3 = new Question('2 * 2', ['4', '2', '0'], 0);
+
+    function score() {
+        var sc = 0;
+
+        return function(correct) {
+            if(correct) {
+                sc++;
+            }
+            return sc;
+        }
+    }
+
+    var keepScore = score();
+
+    function nextQuestion() {
+        var questions = [q1, q2, q3];
+
+        var n = Math.floor(Math.random() * 3);
+    
+        questions[n].displayQuestion();
+    
+        var ans = prompt('Enter answer: ');
+        
+        if (ans !== 'exit') {
+            questions[n].checkAnswer(parseInt(ans), keepScore);
+            nextQuestion();
+        }
+    }
+
+    nextQuestion();
+
+})();
